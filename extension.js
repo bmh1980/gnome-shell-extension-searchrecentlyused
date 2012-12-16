@@ -54,6 +54,8 @@ var _searchRecentlyUsedInstance = null;
 function _bookmarksSort(a, b) {
     if (a.score   < b.score  ) return  1;
     if (a.score   > b.score  ) return -1;
+    if (a.visited < b.visited) return  1;
+    if (a.visited > b.visited) return -1;
     if (a.name    < b.name   ) return -1;
     if (a.name    > b.name   ) return  1;
     return 0;
@@ -118,7 +120,8 @@ SearchRecentlyUsed.prototype = {
                     icon   : recentInfo.get_gicon(),
                     name   : recentInfo.get_display_name(),
                     score  : 0,
-                    uri    : recentInfo.get_uri()
+                    uri    : recentInfo.get_uri(),
+                    visited: recentInfo.get_visited()
                 });
             }
         }
