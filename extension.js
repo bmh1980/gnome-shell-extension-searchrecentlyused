@@ -27,23 +27,9 @@ const Gtk            = imports.gi.Gtk;
 
 const thisExtension = ExtensionUtils.getCurrentExtension();
 
-const Gettext = imports.gettext;
-const localeDir = thisExtension.dir.get_child("locale");
-
-if (localeDir.query_exists(null)) {
-    Gettext.bindtextdomain("searchrecentlyused", localeDir.get_path());
-} else {
-    Gettext.bindtextdomain("searchrecentlyused", Config.LOCALEDIR);
-}
-
-/*
-  I use dgettext(domain, msg) because textdomain(domain) overrides partial other
-  translations of the GnomeShell.
-
-  Eg. The 'Power Off' entry in the user menu and the labels of the 'Power Off'
-  dialog lost their translations.
-*/
-const _ = Gettext.dgettext;
+const Gettext        = imports.gettext;
+const _gettextDomain = Gettext.domain('searchrecentlyused');
+const _              = _gettextDomain.gettext
 
 var ProviderInstance = null;
 
@@ -55,8 +41,7 @@ SearchRecentlyUsed.prototype = {
     __proto__: Search.SearchProvider.prototype,
 
     _init: function() {
-        Search.SearchProvider.prototype._init.call(this, _("searchrecentlyused",
-                                                           "RECENTLY USED"));
+        Search.SearchProvider.prototype._init.call(this, _("RECENTLY USED"));
 
         this.recentFiles = []
 
@@ -173,6 +158,13 @@ SearchRecentlyUsed.prototype = {
 };
 
 function init() {
+    let localeDir = thisExtension.dir.get_child('locale');
+
+    if (localeDir.query_exists(null)) {
+        Gettext.bindtextdomain('searchrecentlyused', localeDir.get_path());
+    } else {
+        Gettext.bindtextdomain('searchrecentlyused', Config.LOCALEDIR);
+    }
 }
 
 function enable() {
