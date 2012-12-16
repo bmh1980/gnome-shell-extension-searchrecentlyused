@@ -40,6 +40,49 @@ const _thisExtension = ExtensionUtils.getCurrentExtension();
 // Variable to hold the extension instance
 var _searchRecentlyUsedInstance = null;
 
+/**
+ * _bookmarksSort:
+ * @a: Object created by SearchRecentlyUsed._buildRecentFileList
+ * @b: Object created by SearchRecentlyUsed._buildRecentFileList
+ *
+ * Sort the list of recently used files in the following order.
+ *
+ * 1. descending by the score
+ * 2. descending by the timestamp of the last visit
+ * 3. ascending by the name
+*/
+function _bookmarksSort(a, b) {
+    if (a.score   < b.score  ) return  1;
+    if (a.score   > b.score  ) return -1;
+    if (a.name    < b.name   ) return -1;
+    if (a.name    > b.name   ) return  1;
+    return 0;
+}
+
+/**
+ * _rateMatch:
+ * @recentFile: Object created by SearchRecentlyUsed._buildRecentFileList
+ * @term: String to search for
+ *
+ * Rate the quality of matches.
+ *
+ * 4: Both, name/title *and* URI begin with the given term
+ * 3: The name/title begin with the given term and the URI contains it
+ * 2: The URI begin with the given term and the name/title contains it
+ * 1: Both, name/title *and* URI contains the given term
+ * 0: Neither name/title nor URI contains the given term
+*/
+function _rateMatch(recentFile, term) {
+    let nameIndex = recentFile.name.toLowerCase().indexOf(term);
+    let uriIndex  = recentFile.uri.toLowerCase().indexOf(term);
+
+    if (nameIndex == 0 && uriIndex == 0) return 4;
+    if (nameIndex == 0 && uriIndex >  0) return 3;
+    if (nameIndex >  0 && uriIndex == 0) return 2;
+    if (nameIndex >  0 && uriIndex >  0) return 1;
+    return 0;
+}
+
 function SearchRecentlyUsed() {
     this._init();
 }
@@ -74,6 +117,7 @@ SearchRecentlyUsed.prototype = {
                     appName: appInfo.get_name(),
                     icon   : recentInfo.get_gicon(),
                     name   : recentInfo.get_display_name(),
+                    score  : 0,
                     uri    : recentInfo.get_uri()
                 });
             }
@@ -87,37 +131,24 @@ SearchRecentlyUsed.prototype = {
             let recentFile = this.recentFiles[i];
 
             for (let j = 0; j < terms.length; j++) {
-                let nameIndex = recentFile.name.toLowerCase().indexOf(terms[j]);
-                let uriIndex  = recentFile.uri.toLowerCase().indexOf(terms[j]);
+                // Terms are treated as logical AND
+                if (j == 0 || recentFile.score > 0) {
+                    let score = _rateMatch(recentFile, terms[j]);
 
-                if (nameIndex == 0 && uriIndex == 0) {
-                    recentFile.score = 4;
-                } else {
-                    if (nameIndex == 0 && uriIndex > 0) {
-                        recentFile.score = 3;
+                    if (score > 0) {
+                        recentFile.score += score;
                     } else {
-                        if (nameIndex > 0 && uriIndex == 0) {
-                            recentFile.score = 2;
-                        } else {
-                            if (nameIndex > 0 && uriIndex > 0) {
-                                recentFile.score = 1;
-                            } else {
-                                recentFile.score = 0;
-                            }
-                        }
+                        recentFile.score = 0;
                     }
                 }
+            }
 
-                if (nameIndex > -1 || uriIndex > -1) {
-                    searchResults.push(recentFile);
-                }
+            if (recentFile.score > 0) {
+                searchResults.push(recentFile);
             }
         }
 
-        searchResults.sort(function(x, y) {
-            return (x.scrore > y.score) || (x.name > y.name);
-        });
-
+        searchResults.sort(_bookmarksSort);
         return searchResults;
     },
 
@@ -165,7 +196,6 @@ SearchRecentlyUsed.prototype = {
             appName   : id.appName,
             createIcon: createIcon,
             uri       : id.uri,
-            score     : -1,
             name      : id.name
         };
     },
