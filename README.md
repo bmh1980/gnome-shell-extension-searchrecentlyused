@@ -1,4 +1,4 @@
 gnome-shell-extension-searchrecentlyused
 ========================================
 
-GNOME Shell extension to search recently used file from the overview.
+GNOME Shell extension to search recently used files from the overview.
