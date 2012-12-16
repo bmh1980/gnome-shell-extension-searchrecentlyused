@@ -2,5 +2,6 @@
     "shell-version": ["3.6"],
     "uuid": "searchrecentlyused@bmh1980de.gmail.com",
     "name": "Search Recently Used Files",
-    "description": "Search recently used files and show the results in the overview",
+    "description": "Search recently used files and show the results in the overview.",
+    "url": "https://github.com/bmh1980/gnome-shell-extension-searchrecentlyused"
 }
