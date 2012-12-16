@@ -1,37 +1,42 @@
-/*
-  Copyright (C) 2012 Marcus Habermehl <bmh1980de@gmail.com>
- 
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
-  USA.
+/**
+ * Copyright (C) 2012 Marcus Habermehl <bmh1980de@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+ * USA.
 */
 
-const St             = imports.gi.St;
-const Main           = imports.ui.main;
+// External imports
+const Gtk = imports.gi.Gtk;
+const St  = imports.gi.St;
+
+// Gjs imports
+const Gettext = imports.gettext;
+const Lang    = imports.lang;
+
+// Internal imports
 const Config         = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
-const Lang           = imports.lang;
+const Main           = imports.ui.main;
 const Search         = imports.ui.search;
-const Gtk            = imports.gi.Gtk;
 
-const thisExtension = ExtensionUtils.getCurrentExtension();
-
-const Gettext        = imports.gettext;
 const _gettextDomain = Gettext.domain('searchrecentlyused');
 const _              = _gettextDomain.gettext
+const _thisExtension = ExtensionUtils.getCurrentExtension();
 
-var ProviderInstance = null;
+// Variable to hold the extension instance
+var _searchRecentlyUsedInstance = null;
 
 function SearchRecentlyUsed() {
     this._init();
@@ -47,7 +52,7 @@ SearchRecentlyUsed.prototype = {
 
         this.recentManager = Gtk.RecentManager.get_default();
         this.callbackId = this.recentManager.connect(
-            "changed", Lang.bind(this, this._buildRecentFileList));
+            'changed', Lang.bind(this, this._buildRecentFileList));
         this._buildRecentFileList();
     },
 
@@ -158,7 +163,7 @@ SearchRecentlyUsed.prototype = {
 };
 
 function init() {
-    let localeDir = thisExtension.dir.get_child('locale');
+    let localeDir = _thisExtension.dir.get_child('locale');
 
     if (localeDir.query_exists(null)) {
         Gettext.bindtextdomain('searchrecentlyused', localeDir.get_path());
@@ -168,16 +173,16 @@ function init() {
 }
 
 function enable() {
-    if (ProviderInstance == null) {
-        ProviderInstance = new SearchRecentlyUsed();
-        Main.overview.addSearchProvider(ProviderInstance);
+    if (_searchRecentlyUsedInstance == null) {
+        _searchRecentlyUsedInstance = new SearchRecentlyUsed();
+        Main.overview.addSearchProvider(_searchRecentlyUsedInstance);
     }
 }
 
 function disable() {
-    if (ProviderInstance != null) {
-        Main.overview.removeSearchProvider(ProviderInstance);
-        ProviderInstance.destroy();
-        ProviderInstance = null;
+    if (_searchRecentlyUsedInstance != null) {
+        Main.overview.removeSearchProvider(_searchRecentlyUsedInstance);
+        _searchRecentlyUsedInstance.destroy();
+        _searchRecentlyUsedInstance = null;
     }
 }
