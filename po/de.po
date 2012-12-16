@@ -1,15 +1,14 @@
-# German translations for searchrecentlyused@bmh1980de.gmail.com package
-# German messages for searchrecentlyused@bmh1980de.gmail.com.
-# Copyright (C) 2012 Marcus Habermehl <bmh1980de@gmail.com>
-# This file is distributed under the same license as the searchrecentlyused@bmh1980de.gmail.com package.
+# German translations for gnome-shell-extension-searchrecentlyused package.
+# Copyright (C) 2012 Marcus Habermehl
+# This file is distributed under the same license as the gnome-shell-extension-searchrecentlyused package.
 # Marcus Habermehl <bmh1980de@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: searchrecentlyused@bmh1980de.gmail.com 1\n"
+"Project-Id-Version: gnome-shell-extension-searchrecentlyused 2\n"
 "Report-Msgid-Bugs-To: bmh1980de@gmail.com\n"
-"POT-Creation-Date: 2012-12-13 13:11+0100\n"
-"PO-Revision-Date: 2012-12-13 13:14+0100\n"
+"POT-Creation-Date: 2012-12-16 20:14+0100\n"
+"PO-Revision-Date: 2012-12-16 20:14+0100\n"
 "Last-Translator: Marcus Habermehl <bmh1980de@gmail.com>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -18,6 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: extension.js:58
+#: ../extension.js:96
 msgid "RECENTLY USED"
 msgstr "ZULETZT VERWENDET"

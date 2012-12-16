@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Marcus Habermehl <bmh1980de@gmail.com>
+# Copyright (C) YEAR Marcus Habermehl
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: searchrecentlyused@bmh1980de.gmail.com 1\n"
+"Project-Id-Version: gnome-shell-extension-searchrecentlyused 2\n"
 "Report-Msgid-Bugs-To: bmh1980de@gmail.com\n"
-"POT-Creation-Date: 2012-12-13 13:11+0100\n"
+"POT-Creation-Date: 2012-12-16 20:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:58
+#: ../extension.js:96
 msgid "RECENTLY USED"
 msgstr ""
