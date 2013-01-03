@@ -18,8 +18,8 @@
 */
 
 // External imports
+const Gio   = imports.gi.Gio;
 const Gtk   = imports.gi.Gtk;
-const Shell = imports.gi.Shell;
 const St    = imports.gi.St;
 
 // Gjs imports
@@ -34,7 +34,6 @@ const Search         = imports.ui.search;
 
 const _gettextDomain = Gettext.domain('searchrecentlyused');
 const _              = _gettextDomain.gettext
-const _appSystem     = Shell.AppSystem.get_default();
 const _thisExtension = ExtensionUtils.getCurrentExtension();
 
 // Variable to hold the extension instance
@@ -116,12 +115,12 @@ SearchRecentlyUsed.prototype = {
                 let appInfo = recentInfo.create_app_info(lastApplication);
 
                 this.recentFiles.push({
-                    appName: appInfo.get_name(),
-                    icon   : recentInfo.get_gicon(),
-                    name   : recentInfo.get_display_name(),
-                    score  : 0,
-                    uri    : recentInfo.get_uri(),
-                    visited: recentInfo.get_visited()
+                    executable: appInfo.get_executable(),
+                    icon      : recentInfo.get_gicon(),
+                    name      : recentInfo.get_display_name(),
+                    score     : 0,
+                    uri       : recentInfo.get_uri(),
+                    visited   : recentInfo.get_visited()
                 });
             }
         }
@@ -164,14 +163,15 @@ SearchRecentlyUsed.prototype = {
          * from an URI to a local path.
         */
 
-        let apps = _appSystem.initial_search([id.appName]);
+        let appInfo = Gio.AppInfo.create_from_commandline(
+            id.executable, null,
+            Gio.AppInfoCreateFlags.SUPPORTS_STARTUP_NOTIFICATION);
 
-        if (apps.length > 0) {
-            let appInfo = apps[0].get_app_info();
+        if (appInfo) {
             appInfo.launch_uris([id.uri], null);
         } else {
             log(_thisExtension.uuid + ': could not get GAppInfo for ' +
-                id.appName + ' to launch ' + id.uri);
+                id.executable + ' to launch ' + id.uri);
         }
     },
 
@@ -196,7 +196,7 @@ SearchRecentlyUsed.prototype = {
 
         return {
             id        : id,
-            appName   : id.appName,
+            executable: id.executable,
             createIcon: createIcon,
             uri       : id.uri,
             name      : id.name
