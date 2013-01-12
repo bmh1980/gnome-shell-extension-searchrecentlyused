@@ -94,7 +94,7 @@ SearchRecentlyUsed.prototype = {
     _init: function() {
         Search.SearchProvider.prototype._init.call(this, _("RECENTLY USED"));
 
-        this.recentFiles = []
+        this.recentFiles = [];
 
         this.recentManager = Gtk.RecentManager.get_default();
         this.callbackId = this.recentManager.connect(
@@ -103,7 +103,7 @@ SearchRecentlyUsed.prototype = {
     },
 
     _buildRecentFileList: function() {
-        this.recentFiles = []
+        this.recentFiles = [];
 
         let recentFiles = this.recentManager.get_items();
 
@@ -178,7 +178,7 @@ SearchRecentlyUsed.prototype = {
     destroy: function() {
         this.recentManager.disconnect(this.callbackId);
         this.callbackId  = -1;
-        this.recentFiles = []
+        this.recentFiles = [];
     },
 
     getInitialResultSet: function(terms) {
