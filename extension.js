@@ -18,9 +18,9 @@
 */
 
 // External imports
-const Gio   = imports.gi.Gio;
-const Gtk   = imports.gi.Gtk;
-const St    = imports.gi.St;
+const Gio = imports.gi.Gio;
+const Gtk = imports.gi.Gtk;
+const St  = imports.gi.St;
 
 // Gjs imports
 const Gettext = imports.gettext;
