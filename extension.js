@@ -78,8 +78,8 @@ function _bookmarksSort(a, b) {
  * 0: Neither name nor URI contains the given term
 */
 function _rateMatch(recentFile, term) {
-    let nameIndex = recentFile.name.toLowerCase().indexOf(term);
-    let uriIndex  = recentFile.uri.toLowerCase().indexOf(term);
+    let nameIndex = recentFile.name.toLocaleLowerCase().indexOf(term);
+    let uriIndex  = recentFile.uri.toLocaleLowerCase().indexOf(term);
 
     let score = 0;
 
@@ -153,7 +153,8 @@ SearchRecentlyUsed.prototype = {
             for (let j = 0; j < terms.length; j++) {
                 // Terms are treated as logical AND
                 if (j == 0 || recentFile.score > 0) {
-                    let score = _rateMatch(recentFile, terms[j].toLowerCase());
+                    let term = terms[j].toLocaleLowerCase();
+                    let score = _rateMatch(recentFile, term);
 
                     if (score > 0) {
                         recentFile.score += score;
