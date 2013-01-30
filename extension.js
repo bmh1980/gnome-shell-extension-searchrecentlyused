@@ -129,16 +129,16 @@ SearchRecentlyUsed.prototype = {
             let recentInfo = recentFiles[i];
 
             if (recentInfo.exists()) {
-                let lastApplication = recentInfo.last_application();
-                let appInfo = recentInfo.create_app_info(lastApplication);
+                let appInfo = Gio.AppInfo.get_default_for_type(
+                    recentInfo.get_mime_type(), false);
 
                 this.recentFiles.push({
-                    executable: appInfo.get_executable(),
-                    icon      : recentInfo.get_gicon(),
-                    name      : recentInfo.get_display_name(),
-                    score     : 0,
-                    uri       : recentInfo.get_uri(),
-                    visited   : recentInfo.get_visited()
+                    appInfo: appInfo,
+                    icon   : recentInfo.get_gicon(),
+                    name   : recentInfo.get_display_name(),
+                    score  : 0,
+                    uri    : recentInfo.get_uri(),
+                    visited: recentInfo.get_visited()
                 });
             }
         }
@@ -174,24 +174,7 @@ SearchRecentlyUsed.prototype = {
     },
 
     activateResult: function(id) {
-        /**
-         * GtkRecentInfo objects having a method to get a corresponding GAppInfo
-         * instance. But this GAppInfo Instances could launch the application
-         * with broken URIs. As example 'Arbeitsfläche' (German for 'Desktop')
-         * becomes 'Arbeitsfl34che'. This looks like a bug in the conversation
-         * from an URI to a local path.
-        */
-
-        let appInfo = Gio.AppInfo.create_from_commandline(
-            id.executable, null,
-            Gio.AppInfoCreateFlags.SUPPORTS_STARTUP_NOTIFICATION);
-
-        if (appInfo) {
-            appInfo.launch_uris([id.uri], null);
-        } else {
-            log(_thisExtension.uuid + ': could not get GAppInfo for ' +
-                id.executable + ' to launch ' + id.uri);
-        }
+        id.appInfo.launch_uris([id.uri], null);
     },
 
     destroy: function() {
@@ -215,7 +198,7 @@ SearchRecentlyUsed.prototype = {
 
         return {
             id        : id,
-            executable: id.executable,
+            appInfo   : id.appInfo,
             createIcon: createIcon,
             uri       : id.uri,
             name      : id.name
