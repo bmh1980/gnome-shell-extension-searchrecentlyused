@@ -20,20 +20,20 @@
 // External imports
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const St  = imports.gi.St;
+const St = imports.gi.St;
 
 // Gjs imports
 const Gettext = imports.gettext;
-const Lang    = imports.lang;
+const Lang = imports.lang;
 
 // Internal imports
-const Config         = imports.misc.config;
+const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
-const Main           = imports.ui.main;
-const Search         = imports.ui.search;
+const Main = imports.ui.main;
+const Search = imports.ui.search;
 
 const _gettextDomain = Gettext.domain('searchrecentlyused');
-const _              = _gettextDomain.gettext
+const _ = _gettextDomain.gettext
 const _thisExtension = ExtensionUtils.getCurrentExtension();
 
 // Variable to hold the extension instance
@@ -51,12 +51,12 @@ var _searchRecentlyUsedInstance = null;
  * 3. ascending by the name
 */
 function _bookmarksSort(a, b) {
-    if (a.score   < b.score  ) return  1;
-    if (a.score   > b.score  ) return -1;
-    if (a.visited < b.visited) return  1;
+    if (a.score < b.score) return 1;
+    if (a.score > b.score) return -1;
+    if (a.visited < b.visited) return 1;
     if (a.visited > b.visited) return -1;
-    if (a.name    < b.name   ) return -1;
-    if (a.name    > b.name   ) return  1;
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
     return 0;
 }
 
@@ -79,7 +79,7 @@ function _bookmarksSort(a, b) {
 */
 function _rateMatch(recentFile, term) {
     let nameIndex = recentFile.name.toLocaleLowerCase().indexOf(term);
-    let uriIndex  = recentFile.uri.toLocaleLowerCase().indexOf(term);
+    let uriIndex = recentFile.uri.toLocaleLowerCase().indexOf(term);
 
     let score = 0;
 
@@ -131,10 +131,10 @@ const SearchRecentlyUsed = new Lang.Class({
 
                 this.recentFiles.push({
                     appInfo: appInfo,
-                    icon   : recentInfo.get_gicon(),
-                    name   : recentInfo.get_display_name(),
-                    score  : 0,
-                    uri    : recentInfo.get_uri(),
+                    icon: recentInfo.get_gicon(),
+                    name: recentInfo.get_display_name(),
+                    score: 0,
+                    uri: recentInfo.get_uri(),
                     visited: recentInfo.get_visited()
                 });
             }
@@ -180,7 +180,7 @@ const SearchRecentlyUsed = new Lang.Class({
 
     destroy: function() {
         this.recentManager.disconnect(this.callbackId);
-        this.callbackId  = -1;
+        this.callbackId = -1;
         this.recentFiles = [];
     },
 
@@ -198,11 +198,11 @@ const SearchRecentlyUsed = new Lang.Class({
         };
 
         return {
-            id        : id,
-            appInfo   : id.appInfo,
+            id: id,
+            appInfo: id.appInfo,
             createIcon: createIcon,
-            uri       : id.uri,
-            name      : id.name
+            uri: id.uri,
+            name: id.name
         };
     },
 
