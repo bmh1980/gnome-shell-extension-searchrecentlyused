@@ -102,15 +102,12 @@ function _rateMatch(recentFile, term) {
     return score;
 }
 
-function SearchRecentlyUsed() {
-    this._init();
-}
-
-SearchRecentlyUsed.prototype = {
-    __proto__: Search.SearchProvider.prototype,
+const SearchRecentlyUsed = new Lang.Class({
+    Name: 'SearchRecentlyUsed',
 
     _init: function() {
-        Search.SearchProvider.prototype._init.call(this, _("RECENTLY USED"));
+        this.title = _("RECENTLY USED");
+        this.searchSystem = null;
 
         this.recentFiles = [];
 
@@ -177,6 +174,10 @@ SearchRecentlyUsed.prototype = {
         id.appInfo.launch_uris([id.uri], null);
     },
 
+    createResultActor: function(resultMeta, terms) {
+        return null;
+    },
+
     destroy: function() {
         this.recentManager.disconnect(this.callbackId);
         this.callbackId  = -1;
@@ -214,7 +215,7 @@ SearchRecentlyUsed.prototype = {
 
         return results;
     }
-};
+});
 
 function init() {
     let localeDir = _thisExtension.dir.get_child('locale');
