@@ -185,7 +185,15 @@ const SearchRecentlyUsed = new Lang.Class({
     },
 
     getInitialResultSet: function(terms) {
-        this.searchSystem.pushResults(this, this._searchRecentlyUsed(terms));
+        let versionArray = Config.PACKAGE_VERSION.split('.');
+
+        if (version[0] == 3 && version[1] >= 9) {
+            this.searchSystem.setResults(
+                this, this._searchRecentlyUsed(terms));
+        } else {
+            this.searchSystem.pushResults(
+                this, this._searchRecentlyUsed(terms));
+        }
     },
 
     getSubsearchResultSet: function(previousResults, terms) {
