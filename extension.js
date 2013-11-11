@@ -187,7 +187,7 @@ const SearchRecentlyUsed = new Lang.Class({
     getInitialResultSet: function(terms) {
         let versionArray = Config.PACKAGE_VERSION.split('.');
 
-        if (version[0] == 3 && version[1] >= 9) {
+        if (versionArray[0] == 3 && versionArray[1] >= 9) {
             this.searchSystem.setResults(
                 this, this._searchRecentlyUsed(terms));
         } else {
