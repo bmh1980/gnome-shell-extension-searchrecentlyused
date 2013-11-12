@@ -174,7 +174,13 @@ const SearchRecentlyUsed = new Lang.Class({
         id.appInfo.launch_uris([id.uri], null);
     },
 
+    // GNOME Shell <= 3.8
     createResultActor: function(resultMeta, terms) {
+        return null;
+    },
+
+    // GNOME Shell >= 3.9
+    createResultObject: function(resultMeta, terms) {
         return null;
     },
 
