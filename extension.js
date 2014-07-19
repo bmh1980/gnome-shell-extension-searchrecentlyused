@@ -216,8 +216,8 @@ const SearchRecentlyUsed = new Lang.Class({
             }
         }
 
-        results.sort(_resultSort);
-        this.searchSystem.setResults(this, results);
+        searchResults.sort(_resultSort);
+        this.searchSystem.setResults(this, searchResults);
     },
 
     getSubsearchResultSet: function(previousResults, terms) {
@@ -233,8 +233,8 @@ const SearchRecentlyUsed = new Lang.Class({
             }
         }
 
-        results.sort(_resultSort);
-        this.searchSystem.setResults(this, results);
+        searchResults.sort(_resultSort);
+        this.searchSystem.setResults(this, searchResults);
     },
 
     getResultMetas: function(ids, callback) {
