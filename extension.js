@@ -182,12 +182,12 @@ const SearchRecentlyUsed = new Lang.Class({
         id.activate();
     },
 
-    createResultObject: function(resultMeta, terms) {
-        return new RecentEntryIcon(resultMeta.id);
+    createResultObject: function(metaInfo, terms) {
+        return new RecentEntryIcon(metaInfo.id);
     },
 
-    filterResults: function(results, maxNumber) {
-        return results.slice(0, maxNumber);
+    filterResults: function(results, maxResults) {
+        return results.slice(0, maxResults);
     },
 
     getInitialResultSet: function(terms) {
