@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012 Marcus Habermehl <bmh1980@posteo.org>
+ * Copyright (C) 2012-2014 Marcus Habermehl <bmh1980@posteo.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -131,18 +131,14 @@ const RecentEntry = new Lang.Class({
 
                 if (nameIndex == 0) {
                     this._score += 3;
-                } else {
-                    if (nameIndex > 0) {
-                        this._score += 2;
-                    }
+                } else if (nameIndex > 0) {
+                    this._score += 2;
                 }
 
                 if (uriIndex == 0) {
                     this._score += 2;
-                } else {
-                    if (uriIndex > 0) {
-                        this._score += 1;
-                    }
+                } else if (uriIndex > 0) {
+                    this._score += 1;
                 }
             }
         }
