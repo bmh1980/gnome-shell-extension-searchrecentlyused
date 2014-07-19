@@ -70,6 +70,10 @@ const RecentEntry = new Lang.Class({
         this._score = 0;
     },
 
+    get appIcon() {
+        return this.appInfo.get_icon();
+    },
+
     get appInfo() {
         return Gio.AppInfo.get_default_for_type(this.mimeType, false);
     },
@@ -164,6 +168,12 @@ const RecentEntryIcon = new Lang.Class({
                                 icon_size: size });
 
         box.add_child(icon);
+
+        if (this._recentEntry.appIcon) {
+            let emblem = new St.Icon({gicon: this._recentEntry.appIcon,
+                                      icon_size: 22});
+            box.add_child(emblem);
+        }
 
         return box;
     }
