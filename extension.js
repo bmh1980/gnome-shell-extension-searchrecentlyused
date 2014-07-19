@@ -18,6 +18,7 @@
 */
 
 // External imports
+const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const St = imports.gi.St;
@@ -29,6 +30,7 @@ const Lang = imports.lang;
 // Internal imports
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
+const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const Search = imports.ui.search;
 
@@ -60,47 +62,112 @@ function _resultSort(a, b) {
     return 0;
 }
 
-/**
- * _rateMatch:
- * @recentFile: Object created by SearchRecentlyUsed._buildRecentFileList
- * @term: String to search for
- *
- * Rate the quality of matches.
- *
- * 5: Both, name *and* URI begin with the given term
- * 4: The name begin with the given term and the URI contains it
- * 4: The URI begin with the given term and the name contains it
- * 3: The name begin with the given term, but the URI does not contains it
- * 3: Both, name *and* URI contains the given term
- * 2: The URI begin with the given term, but the name does not contains it
- * 2: The name contains the given term, but the URI not
- * 1: The URI contains the given term, but the name not
- * 0: Neither name nor URI contains the given term
-*/
-function _rateMatch(recentFile, term) {
-    let nameIndex = recentFile.name.toLocaleLowerCase().indexOf(term);
-    let uriIndex = recentFile.uri.toLocaleLowerCase().indexOf(term);
+const RecentEntry = new Lang.Class({
+    Name: 'RecentEntry',
 
-    let score = 0;
+    _init: function(recentInfo) {
+        this._recentInfo = recentInfo;
+        this._score = 0;
+    },
 
-    if (nameIndex == 0) {
-        score += 3;
-    } else {
-        if (nameIndex > 0) {
-            score += 2;
+    get appInfo() {
+        return Gio.AppInfo.get_default_for_type(this.mimeType, false);
+    },
+
+    get exists() {
+        return this._recentInfo.exists();
+    },
+
+    get gicon() {
+        let file = Gio.File.new_for_uri(this.uri);
+        let info = file.query_info(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH,
+                                   Gio.FileQueryInfoFlags.NONE, null);
+        let path = info.get_attribute_byte_string(
+            Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH);
+
+        if (path) {
+            return Gio.FileIcon.new(Gio.File.new_for_path(path));
+        } else {
+            return this._recentInfo.get_gicon();
+        }
+    },
+
+    get mimeType() {
+        return this._recentInfo.get_mime_type();
+    },
+
+    get name() {
+        return this._recentInfo.get_display_name();
+    },
+
+    get score() {
+        return this._score;
+    },
+
+    get uri() {
+        return this._recentInfo.get_uri();
+    },
+
+    get visited() {
+        return this._recentInfo.get_visited();
+    },
+
+    activate: function() {
+        this.appInfo.launch_uris([this.uri], null);
+    },
+
+    rate: function(terms) {
+        this._score = 0;
+
+        for (let i = 0; i < terms.length; i++) {
+            if (i == 0 || this._score > 0) {
+                let term = terms[i].toLocaleLowerCase();
+                let nameIndex = this.name.toLocaleLowerCase().indexOf(term);
+                let uriIndex = this.uri.toLocaleLowerCase().indexOf(term);
+
+                if (nameIndex == 0) {
+                    this._score += 3;
+                } else {
+                    if (nameIndex > 0) {
+                        this._score += 2;
+                    }
+                }
+
+                if (uriIndex == 0) {
+                    this._score += 2;
+                } else {
+                    if (uriIndex > 0) {
+                        this._score += 1;
+                    }
+                }
+            }
         }
     }
+});
 
-    if (uriIndex == 0) {
-        score += 2;
-    } else {
-        if (uriIndex > 0) {
-            score += 1;
-        }
+const RecentEntryIcon = new Lang.Class({
+    Name: 'RecentEntryIcon',
+
+    _init: function(recentEntry) {
+        this._recentEntry = recentEntry;
+        this.actor = new St.Bin({reactive: true, track_hover: true});
+        this.icon = new IconGrid.BaseIcon(
+            this._recentEntry.name,
+            {showLabel: true, createIcon: Lang.bind(this, this.createIcon)});
+        this.actor.child = this.icon.actor;
+        this.actor.label_actor = this.icon.label;
+    },
+
+    createIcon: function(size) {
+        let box = new Clutter.Box();
+        let icon = new St.Icon({gicon: this._recentEntry.gicon,
+                                icon_size: size });
+
+        box.add_child(icon);
+
+        return box;
     }
-
-    return score;
-}
+});
 
 const SearchRecentlyUsed = new Lang.Class({
     Name: 'SearchRecentlyUsed',
@@ -111,41 +178,12 @@ const SearchRecentlyUsed = new Lang.Class({
         this.recentManager = Gtk.RecentManager.get_default();
     },
 
-    _searchRecentlyUsed: function(recentFiles, terms) {
-        let searchResults = [];
-
-        for (let i = 0; i < recentFiles.length; i++) {
-            let recentFile = recentFiles[i];
-
-            for (let j = 0; j < terms.length; j++) {
-                // Terms are treated as logical AND
-                if (j == 0 || recentFile.score > 0) {
-                    let term = terms[j].toLocaleLowerCase();
-                    let score = _rateMatch(recentFile, term);
-
-                    if (score > 0) {
-                        recentFile.score += score;
-                    } else {
-                        recentFile.score = 0;
-                    }
-                }
-            }
-
-            if (recentFile.score > 0) {
-                searchResults.push(recentFile);
-            }
-        }
-
-        searchResults.sort(_resultSort);
-        return searchResults;
-    },
-
     activateResult: function(id) {
-        id.appInfo.launch_uris([id.uri], null);
+        id.activate();
     },
 
     createResultObject: function(resultMeta, terms) {
-        return null;
+        return new RecentEntryIcon(resultMeta.id);
     },
 
     filterResults: function(results, maxNumber) {
@@ -153,53 +191,51 @@ const SearchRecentlyUsed = new Lang.Class({
     },
 
     getInitialResultSet: function(terms) {
+        let searchResults = [];
         let recentFiles = this.recentManager.get_items();
-        this.searchSystem.setResults(
-            this, this._searchRecentlyUsed(recentFiles, terms));
+
+        for (let i = 0; i < recentFiles.length; i++) {
+            let recentFile = new RecentEntry(recentFiles[i]);
+
+            if (recentFile.exists) {
+                recentFile.rate(terms);
+
+                if (recentFile.score > 0) {
+                    searchResults.push(recentFile);
+                }
+            }
+        }
+
+        results.sort(_resultSort);
+        this.searchSystem.setResults(this, results);
     },
 
     getSubsearchResultSet: function(previousResults, terms) {
-        this.searchSystem.setResults(
-            this, this._searchRecentlyUsed(previousResults, terms));
-    },
+        let searchResults = [];
 
-    getResultMeta: function(id) {
-        let createIcon = function(size) {
-            let file = Gio.file_new_for_uri(id.uri);
+        for (let i = 0; i < previousResults.length; i++) {
+            let recentFile = previousResults[i];
 
-            let info = file.query_info(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH, 0, null);
+            recentFile.rate(terms);
 
-            let path = info.get_attribute_byte_string(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH);
-
-            if (path) {
-                // got thumbnail of file. use it
-                return imports.gi.St.TextureCache.get_default().load_gicon(
-                        null,
-                        new Gio.FileIcon({ file: Gio.file_new_for_path(path) }),
-                        size);
-            } else {
-                // fallback to default icon for the file type
-                return new St.Icon({gicon: id.icon, icon_size: size});
+            if (recentFile.score > 0) {
+                searchResults.push(recentFile);
             }
-        };
+        }
 
-        return {
-            id: id,
-            appInfo: id.appInfo,
-            createIcon: createIcon,
-            uri: id.uri,
-            name: id.name
-        };
+        results.sort(_resultSort);
+        this.searchSystem.setResults(this, results);
     },
 
     getResultMetas: function(ids, callback) {
-        let results = ids.map(this.getResultMeta);
+        let results = [];
 
-        if (callback) {
-            callback(results);
+        for (let i = 0; i < ids.length; i++) {
+            let id = ids[i];
+            results.push({id: id, name: id.name})
         }
 
-        return results;
+        callback(results);
     }
 });
 
