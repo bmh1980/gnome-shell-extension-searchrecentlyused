@@ -108,44 +108,14 @@ const SearchRecentlyUsed = new Lang.Class({
     _init: function() {
         this.title = _("RECENTLY USED");
         this.searchSystem = null;
-
-        this.recentFiles = [];
-
         this.recentManager = Gtk.RecentManager.get_default();
-        this.callbackId = this.recentManager.connect(
-            'changed', Lang.bind(this, this._buildRecentFileList));
-        this._buildRecentFileList();
     },
 
-    _buildRecentFileList: function() {
-        this.recentFiles = [];
-
-        let recentFiles = this.recentManager.get_items();
-
-        for (let i = 0; i < recentFiles.length; i++) {
-            let recentInfo = recentFiles[i];
-
-            if (recentInfo.exists()) {
-                let appInfo = Gio.AppInfo.get_default_for_type(
-                    recentInfo.get_mime_type(), false);
-
-                this.recentFiles.push({
-                    appInfo: appInfo,
-                    icon: recentInfo.get_gicon(),
-                    name: recentInfo.get_display_name(),
-                    score: 0,
-                    uri: recentInfo.get_uri(),
-                    visited: recentInfo.get_visited()
-                });
-            }
-        }
-    },
-
-    _searchRecentlyUsed: function(terms) {
+    _searchRecentlyUsed: function(recentFiles, terms) {
         let searchResults = [];
 
-        for (let i = 0; i < this.recentFiles.length; i++) {
-            let recentFile = this.recentFiles[i];
+        for (let i = 0; i < recentFiles.length; i++) {
+            let recentFile = recentFiles[i];
 
             for (let j = 0; j < terms.length; j++) {
                 // Terms are treated as logical AND
@@ -178,22 +148,19 @@ const SearchRecentlyUsed = new Lang.Class({
         return null;
     },
 
-    destroy: function() {
-        this.recentManager.disconnect(this.callbackId);
-        this.callbackId = -1;
-        this.recentFiles = [];
-    },
-
     filterResults: function(results, maxNumber) {
         return results.slice(0, maxNumber);
     },
 
     getInitialResultSet: function(terms) {
-        this.searchSystem.setResults(this, this._searchRecentlyUsed(terms));
+        let recentFiles = this.recentManager.get_items();
+        this.searchSystem.setResults(
+            this, this._searchRecentlyUsed(recentFiles, terms));
     },
 
     getSubsearchResultSet: function(previousResults, terms) {
-        return this.getInitialResultSet(terms);
+        this.searchSystem.setResults(
+            this, this._searchRecentlyUsed(previousResults, terms));
     },
 
     getResultMeta: function(id) {
@@ -256,7 +223,6 @@ function enable() {
 function disable() {
     if (_searchRecentlyUsedInstance != null) {
         Main.overview.removeSearchProvider(_searchRecentlyUsedInstance);
-        _searchRecentlyUsedInstance.destroy();
         _searchRecentlyUsedInstance = null;
     }
 }
