@@ -1,5 +1,5 @@
 {
-    "shell-version": ["3.6", "3.7", "3.8", "3.9", "3.10"],
+    "shell-version": ["3.9", "3.10"],
     "uuid": "searchrecentlyused@bmh1980de.gmail.com",
     "name": "Search Recently Used Files",
     "description": "Search recently used files and show the results in the overview.",

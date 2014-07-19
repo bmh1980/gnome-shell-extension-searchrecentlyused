@@ -174,12 +174,6 @@ const SearchRecentlyUsed = new Lang.Class({
         id.appInfo.launch_uris([id.uri], null);
     },
 
-    // GNOME Shell <= 3.8
-    createResultActor: function(resultMeta, terms) {
-        return null;
-    },
-
-    // GNOME Shell >= 3.9
     createResultObject: function(resultMeta, terms) {
         return null;
     },
@@ -190,7 +184,6 @@ const SearchRecentlyUsed = new Lang.Class({
         this.recentFiles = [];
     },
 
-    // GNOME Shell >= 3.9
     filterResults: function(results, maxNumber) {
         return results.slice(0, maxNumber);
     },
