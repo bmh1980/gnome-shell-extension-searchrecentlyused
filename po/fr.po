@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-extension-searchrecentlyused 2\n"
 "Report-Msgid-Bugs-To: danjjl@hotmail.com\n"
-"POT-Creation-Date: 2013-01-10 12:56+0100\n"
+"POT-Creation-Date: 2014-07-19 12:12+0200\n"
 "PO-Revision-Date: 2013-01-10 12:56+0100\n"
 "Last-Translator: Jonathan Dan <danjjl@hotmail.com>\n"
 "Language-Team: French\n"
@@ -17,6 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../extension.js:96
+#: ../extension.js:186
 msgid "RECENTLY USED"
 msgstr "UTILISÉS RÉCEMMENT"

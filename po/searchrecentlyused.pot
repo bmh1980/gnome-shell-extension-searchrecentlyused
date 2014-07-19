@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-shell-extension-searchrecentlyused 3\n"
+"Project-Id-Version: gnome-shell-extension-searchrecentlyused 11\n"
 "Report-Msgid-Bugs-To: bmh1980@posteo.org\n"
-"POT-Creation-Date: 2013-01-10 13:52+0100\n"
+"POT-Creation-Date: 2014-07-19 12:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../extension.js:95
+#: ../extension.js:186
 msgid "RECENTLY USED"
 msgstr ""
