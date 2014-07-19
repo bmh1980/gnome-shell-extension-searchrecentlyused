@@ -206,7 +206,22 @@ const SearchRecentlyUsed = new Lang.Class({
 
     getResultMeta: function(id) {
         let createIcon = function(size) {
-            return new St.Icon({gicon: id.icon, icon_size: size});
+            let file = Gio.file_new_for_uri(id.uri);
+
+            let info = file.query_info(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH, 0, null);
+
+            let path = info.get_attribute_byte_string(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH);
+
+            if (path) {
+                // got thumbnail of file. use it
+                return imports.gi.St.TextureCache.get_default().load_gicon(
+                        null,
+                        new Gio.FileIcon({ file: Gio.file_new_for_path(path) }),
+                        size);
+            } else {
+                // fallback to default icon for the file type
+                return new St.Icon({gicon: id.icon, icon_size: size});
+            }
         };
 
         return {
