@@ -40,7 +40,7 @@ const _thisExtension = ExtensionUtils.getCurrentExtension();
 var _searchRecentlyUsedInstance = null;
 
 /**
- * _bookmarksSort:
+ * _resultSort:
  * @a: Object created by SearchRecentlyUsed._buildRecentFileList
  * @b: Object created by SearchRecentlyUsed._buildRecentFileList
  *
@@ -50,7 +50,7 @@ var _searchRecentlyUsedInstance = null;
  * 2. descending by the timestamp of the last visit
  * 3. ascending by the name
 */
-function _bookmarksSort(a, b) {
+function _resultSort(a, b) {
     if (a.score < b.score) return 1;
     if (a.score > b.score) return -1;
     if (a.visited < b.visited) return 1;
@@ -166,7 +166,7 @@ const SearchRecentlyUsed = new Lang.Class({
             }
         }
 
-        searchResults.sort(_bookmarksSort);
+        searchResults.sort(_resultSort);
         return searchResults;
     },
 
