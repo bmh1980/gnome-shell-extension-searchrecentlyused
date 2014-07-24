@@ -179,6 +179,7 @@ const SearchRecentlyUsed = new Lang.Class({
     Name: 'SearchRecentlyUsed',
 
     _init: function() {
+        this.id = 'searchrecentlyused@bmh1980de.gmail.com';
         this.title = _("RECENTLY USED");
         this.searchSystem = null;
         this.recentManager = Gtk.RecentManager.get_default();
