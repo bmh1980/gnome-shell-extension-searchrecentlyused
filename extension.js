@@ -21,7 +21,6 @@
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const St = imports.gi.St;
 
 // Gjs imports
 const Gettext = imports.gettext;
@@ -33,6 +32,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const Search = imports.ui.search;
+const St = imports.gi.St;
 
 const _gettextDomain = Gettext.domain('searchrecentlyused');
 const _ = _gettextDomain.gettext
