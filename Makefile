@@ -3,47 +3,26 @@ PACKAGE_NAME    = gnome-shell-extension-$(GETTEXT_PACKAGE)
 PACKAGE_VERSION = 12
 EXTENSION_UUID  = $(GETTEXT_PACKAGE)@bmh1980de.gmail.com
 
-INTLTOOL_UPDATE = XGETTEXT_ARGS="$(XGETTEXT_ARGS)" \
-                  intltool-update -g $(GETTEXT_PACKAGE)
-XGETTEXT_ARGS   = -d $(GETTEXT_PACKAGE) --from-code=UTF-8 -k_ -kN_ \
-                  --copyright-holder='Marcus Habermehl' \
-                  --package-name=$(PACKAGE_NAME) \
-                  --package-version=$(PACKAGE_VERSION) \
-                  --msgid-bugs-address=bmh1980@posteo.org
-
 DATADIR ?= /usr/share
 
 ifeq ($(shell id -u),0)
 	EXTENSIONDIR = $(DATADIR)/gnome-shell/extensions/$(EXTENSION_UUID)
-	LOCALEDIR   ?= $(DATADIR)/locale
 else
 	EXTENSIONDIR = $(HOME)/.local/share/gnome-shell/extensions/$(EXTENSION_UUID)
-	LOCALEDIR    = $(EXTENSIONDIR)/locale
 endif
-
-LINGUAS = $(shell cat po/LINGUAS)
 
 all:
 	@echo "dist      : create a source archive"
 	@echo "extension : create an extension archive"
 	@echo "install   : install the extension"
-	@echo "update-po : update the PO files"
-	@echo "update-pot: update the POT file"
 
 clean:
-	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION) locale
-
-create-mo:
-	set -e; \
-	for i in $(LINGUAS); do \
-		mkdir -p locale/$$i/LC_MESSAGES; \
-		msgfmt -o locale/$$i/LC_MESSAGES/$(GETTEXT_PACKAGE).mo po/$$i; \
-	done
+	rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
 dist:
 	set -e; \
 	mkdir $(PACKAGE_NAME)-$(PACKAGE_VERSION); \
-	cp -ra extension.js metadata.json Makefile po \
+	cp -ra extension.js metadata.json Makefile \
 		$(PACKAGE_NAME)-$(PACKAGE_VERSION); \
 	if [ -d .git ]; then \
 		git log > $(PACKAGE_NAME)-$(PACKAGE_VERSION)/ChangeLog; \
@@ -51,27 +30,11 @@ dist:
 	tar -c --xz -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.xz \
 		$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-extension: create-mo
-	zip $(EXTENSION_UUID).zip extension.js metadata.json \
-		$(shell find locale -type f)
+extension:
+	zip $(EXTENSION_UUID).zip extension.js metadata.json
 
-install: create-mo
+install:
 	set -e; \
-	mkdir -p $(DESTDIR)$(EXTENSIONDIR) $(DESTDIR)$(LOCALEDIR); \
-	cp -a extension.js metadata.json $(DESTDIR)$(EXTENSIONDIR); \
-	cp -a locale/* $(DESTDIR)$(LOCALEDIR)
-
-update-po: update-pot
-	set -e; \
-	cd po; \
-	for i in $(LINGUAS); do \
-		$(INTLTOOL_UPDATE) -d $$i; \
-	done
-
-update-pot:
-	set -e; \
-	cd po; \
-	$(INTLTOOL_UPDATE) -p; \
-	sed -i 's|\(Content-Type: text/plain; charset=\)CHARSET|\1UTF-8|' \
-	    $(GETTEXT_PACKAGE).pot
+	mkdir -p $(DESTDIR)$(EXTENSIONDIR); \
+	cp -a extension.js metadata.json $(DESTDIR)$(EXTENSIONDIR)
 

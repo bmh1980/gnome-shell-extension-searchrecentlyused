@@ -23,20 +23,12 @@ const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 
 // Gjs imports
-const Gettext = imports.gettext;
 const Lang = imports.lang;
 
 // Internal imports
-const Config = imports.misc.config;
-const ExtensionUtils = imports.misc.extensionUtils;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
-const Search = imports.ui.search;
 const St = imports.gi.St;
-
-const _gettextDomain = Gettext.domain('searchrecentlyused');
-const _ = _gettextDomain.gettext
-const _thisExtension = ExtensionUtils.getCurrentExtension();
 
 // Variable to hold the extension instance
 var _searchRecentlyUsedInstance = null;
@@ -180,7 +172,6 @@ const SearchRecentlyUsed = new Lang.Class({
 
     _init: function() {
         this.id = 'searchrecentlyused@bmh1980de.gmail.com';
-        this.title = _("RECENTLY USED");
         this.searchSystem = null;
         this.recentManager = Gtk.RecentManager.get_default();
     },
@@ -245,16 +236,6 @@ const SearchRecentlyUsed = new Lang.Class({
         callback(results);
     }
 });
-
-function init() {
-    let localeDir = _thisExtension.dir.get_child('locale');
-
-    if (localeDir.query_exists(null)) {
-        Gettext.bindtextdomain('searchrecentlyused', localeDir.get_path());
-    } else {
-        Gettext.bindtextdomain('searchrecentlyused', Config.LOCALEDIR);
-    }
-}
 
 function enable() {
     if (_searchRecentlyUsedInstance == null) {
