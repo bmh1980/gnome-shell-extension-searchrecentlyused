@@ -1,6 +1,6 @@
 GETTEXT_PACKAGE = searchrecentlyused
 PACKAGE_NAME    = gnome-shell-extension-$(GETTEXT_PACKAGE)
-PACKAGE_VERSION = 12
+PACKAGE_VERSION = 13
 EXTENSION_UUID  = $(GETTEXT_PACKAGE)@bmh1980de.gmail.com
 
 DATADIR ?= /usr/share
