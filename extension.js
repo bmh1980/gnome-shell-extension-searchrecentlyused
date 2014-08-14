@@ -27,6 +27,7 @@ const Lang = imports.lang;
 
 // Internal imports
 const IconGrid = imports.ui.iconGrid;
+const Config = imports.misc.config;
 const Main = imports.ui.main;
 const St = imports.gi.St;
 
@@ -240,13 +241,37 @@ const SearchRecentlyUsed = new Lang.Class({
 function enable() {
     if (_searchRecentlyUsedInstance == null) {
         _searchRecentlyUsedInstance = new SearchRecentlyUsed();
-        Main.overview.addSearchProvider(_searchRecentlyUsedInstance);
+
+        let versionArray = Config.PACKAGE_VERSION.split('.');
+
+        if (versionArray[1] >= 11 && versionArray[2] >= 2) {
+            /**
+             * Hack copied from
+             * https://github.com/hamiller/tracker-search-provider/blob/gnome_12_listview/extension.js
+             * to fix https://bugzilla.gnome.org/show_bug.cgi?id=727461
+             */
+            Main.overview.viewSelector._searchResults._searchSystem.addProvider(_searchRecentlyUsedInstance);
+        } else {
+            Main.overview.addSearchProvider(_searchRecentlyUsedInstance);
+       }
     }
 }
 
 function disable() {
     if (_searchRecentlyUsedInstance != null) {
-        Main.overview.removeSearchProvider(_searchRecentlyUsedInstance);
+        let versionArray = Config.PACKAGE_VERSION.split('.');
+
+        if (versionArray[1] >= 11 && versionArray[2] >= 2) {
+            /**
+             * Hack copied from
+             * https://github.com/hamiller/tracker-search-provider/blob/gnome_12_listview/extension.js
+             * to fix https://bugzilla.gnome.org/show_bug.cgi?id=727461
+            */
+            Main.overview.viewSelector._searchResults._searchSystem._unregisterProvider(_searchRecentlyUsedInstance);
+        } else {
+            Main.overview.removeSearchProvider(_searchRecentlyUsedInstance);
+        }
+
         _searchRecentlyUsedInstance = null;
     }
 }
